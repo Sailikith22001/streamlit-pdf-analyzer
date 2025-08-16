@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import fitz  # PyMuPDF library
+from google.oauth2 import service_account
 import json
 import traceback
 import plotly.express as px
@@ -136,13 +137,25 @@ def initialize_vertex_ai():
     This is the secure way to authenticate with your Google Cloud project.
     """
     try:
+        # Check for the project ID and the service account info
         if "gcp" not in st.secrets or "project" not in st.secrets.gcp:
-            st.error("GCP 'project' ID not found in Streamlit secrets (.streamlit/secrets.toml).")
+            st.error("GCP 'project' ID not found in Streamlit secrets.")
             return False
+        if "gcp_service_account" not in st.secrets:
+            st.error("GCP service account credentials not found in Streamlit secrets.")
+            return False
+
+        # Create credentials from the service account info
+        credentials = service_account.Credentials.from_service_account_info(
+            st.secrets.gcp_service_account
+        )
         
         project_id = st.secrets.gcp["project"]
         location = st.secrets.gcp.get("location", "us-central1")
-        vertexai.init(project=project_id, location=location)
+        
+        # Initialize Vertex AI with the project, location, AND credentials
+        vertexai.init(project=project_id, location=location, credentials=credentials)
+        
         return True
     except Exception as e:
         st.error(f"Failed to initialize Google Vertex AI: {e}")
