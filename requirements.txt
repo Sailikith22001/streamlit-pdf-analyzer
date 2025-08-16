@@ -1,0 +1,12 @@
+
+streamlit>=1.28.0
+pandas>=2.0.0
+PyMuPDF>=1.23.0
+google-cloud-aiplatform>=1.36.0
+plotly>=5.15.0
+numpy>=1.24.0
+openpyxl>=3.1.0
+xlsxwriter>=3.1.0
+python-dateutil>=2.8.2
+reportlab
+vertexai
